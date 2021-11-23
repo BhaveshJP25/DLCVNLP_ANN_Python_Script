@@ -3,6 +3,7 @@ from src.utils.data_mgmt import get_data
 from src.utils.model import create_model, save_model, save_model_plot
 import argparse
 import os
+import tensorflow as tf
 
 def training(config_path):
     config = read_config(config_path)
@@ -20,9 +21,26 @@ def training(config_path):
     EPOCHS = config["params"]["epochs"]
     VALIDATION_SET = (X_valid, y_valid)
 
-    history = model.fit(X_train, y_train, epochs=EPOCHS, validation_data=VALIDATION_SET)
+    #CALLBACKS
+    log_dir = config["logs"]["logs_dir"]
+    tensorbosrd_root_log_dir = config["logs"]["TENSORBOARD_ROOT_LOG_DIR"]
+    tensorboard_logs_dir = os.path.join(log_dir, tensorbosrd_root_log_dir)
+    tensorboard_cb = tf.keras.callbacks.TensorBoard(log_dir=tensorboard_logs_dir)
+
+    early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
 
     artifacts_dir = config["artifacts"]["artifacts_dir"]
+    checkpoint_root_dir = config["artifacts"]["CHECKPOINT_DIR"]
+    checkpoint_model_name = config["artifacts"]["checkpoints_model_name"]
+    model_checkpoint_dir = os.path.join(artifacts_dir, checkpoint_root_dir, checkpoint_model_name)
+    checkpointing_cb = tf.keras.callbacks.ModelCheckpoint(model_checkpoint_dir, save_best_only=True)
+
+    CALLBACKS_LIST = [tensorboard_cb, early_stopping_cb, checkpointing_cb]
+
+    # Restart training from checkpoint, using load model
+    # history = tf.keras.models.load_model(model_checkpoint_dir)
+    history = model.fit(X_train, y_train, epochs=EPOCHS, validation_data=VALIDATION_SET, callbacks=CALLBACKS_LIST)
+
     model_dir = config["artifacts"]["model_dir"]
     plot_dir = config["artifacts"]["plot_dir"]
 

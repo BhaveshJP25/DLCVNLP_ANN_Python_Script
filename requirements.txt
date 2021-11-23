@@ -4,3 +4,4 @@ seaborn
 numpy
 pandas
 PyYAML
+-e . # To Install Local Package Defined In setup.py
