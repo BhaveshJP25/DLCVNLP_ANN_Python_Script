@@ -1,6 +1,6 @@
 from src.utils.common import read_config
 from src.utils.data_mgmt import get_data
-from src.utils.model import create_model, save_model, save_model_plot
+from src.utils.model import create_model, save_model, save_model_plot, get_unique_filename
 import argparse
 import os
 import tensorflow as tf
@@ -23,8 +23,8 @@ def training(config_path):
 
     #CALLBACKS
     log_dir = config["logs"]["logs_dir"]
-    tensorbosrd_root_log_dir = config["logs"]["TENSORBOARD_ROOT_LOG_DIR"]
-    tensorboard_logs_dir = os.path.join(log_dir, tensorbosrd_root_log_dir)
+    tensorboard_root_log_dir = config["logs"]["TENSORBOARD_ROOT_LOG_DIR"]
+    tensorboard_logs_dir = os.path.join(log_dir, tensorboard_root_log_dir, get_unique_filename("logs"))
     tensorboard_cb = tf.keras.callbacks.TensorBoard(log_dir=tensorboard_logs_dir)
 
     early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
@@ -55,6 +55,8 @@ def training(config_path):
 
     save_model(model, model_name, model_dir_path)
     save_model_plot(history, plot_name, plot_dir_path)
+
+    print("\nTo Run Tensorboard Logs Run: \ntensorboard --logdir="+tensorboard_logs_dir)
 
 
 if __name__ == '__main__':
