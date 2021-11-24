@@ -1,5 +1,5 @@
 params:
-  epochs: 5
+  epochs: 100
   batch_size: 32
   num_classes: 10
   loss_function: sparse_categorical_crossentropy
