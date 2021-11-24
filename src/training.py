@@ -23,20 +23,6 @@ def training(config_path):
     VALIDATION_SET = (X_valid, y_valid)
 
     #CALLBACKS
-    # log_dir = config["logs"]["logs_dir"]
-    # tensorboard_root_log_dir = config["logs"]["TENSORBOARD_ROOT_LOG_DIR"]
-    # tensorboard_logs_dir = os.path.join(log_dir, tensorboard_root_log_dir, get_unique_filename("logs"))
-    # tensorboard_cb = tf.keras.callbacks.TensorBoard(log_dir=tensorboard_logs_dir)
-
-    # early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
-
-    # artifacts_dir = config["artifacts"]["artifacts_dir"]
-    # checkpoint_root_dir = config["artifacts"]["CHECKPOINT_DIR"]
-    # checkpoint_model_name = config["artifacts"]["checkpoints_model_name"]
-    # model_checkpoint_dir = os.path.join(artifacts_dir, checkpoint_root_dir, checkpoint_model_name)
-    # checkpointing_cb = tf.keras.callbacks.ModelCheckpoint(model_checkpoint_dir, save_best_only=True)
-
-    # CALLBACKS_LIST = [tensorboard_cb, early_stopping_cb, checkpointing_cb]
     CALLBACKS_LIST = get_callbacks(config, X_train)
 
     # Restart training from checkpoint, using load model
